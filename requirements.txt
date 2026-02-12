@@ -1,0 +1,13 @@
+# Data Science & ML
+numpy<2.0.0
+pandas
+scikit-learn
+tensorflow
+
+# API & Serving
+fastapi
+uvicorn
+python-multipart
+
+# Utilities
+h5py

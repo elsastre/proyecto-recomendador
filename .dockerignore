@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+.gitignore
+Dockerfile
+.git
+data/*.data
+data/*.item

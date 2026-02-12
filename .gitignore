@@ -1,0 +1,16 @@
+# Entornos virtuales
+venv/
+.env
+
+# Python 
+__pycache__/
+*.pyc
+
+# Datos y Modelos pesados 
+data/u.data
+data/u.item
+models/recommender_v1.h5
+
+# VS Code y Sistema
+.vscode/
+.DS_Store
