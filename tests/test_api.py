@@ -1,8 +1,6 @@
 from unittest.mock import patch, MagicMock
 import pytest
 
-# --- MOCKING: "Engañamos" a la API antes de que importe main.py ---
-# Simulamos que el modelo y los datos se cargan bien aunque no existan los archivos
 with patch('tensorflow.keras.models.load_model'), \
      patch('src.preprocess.DataProcessor.load_and_clean'), \
      patch('pandas.read_csv'):
