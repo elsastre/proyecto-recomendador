@@ -22,8 +22,6 @@ $$y_{ui} = \sigma(MLP(P^T v_u \oplus Q^T v_i))$$
 - **Interaction Layer**: Concatenated vectors passed through Dense layers with ReLU activation.
 - **Output**: A probability score (0-1) representing the likelihood of interest.
 
-
-
 ## 🛠️ Tech Stack
 - **Engine**: Python 3.12, TensorFlow, Pandas, NumPy.
 - **API**: FastAPI, Uvicorn, Pydantic.
@@ -33,27 +31,30 @@ $$y_{ui} = \sigma(MLP(P^T v_u \oplus Q^T v_i))$$
 ## 📦 Getting Started
 
 ### Prerequisites
-- Docker installed on your machine.
-- MovieLens 100k dataset (`u.data`, `u.item`) placed in the `/data` folder.
+- [Docker](https://docs.docker.com/get-docker/) installed on your machine.
+- [MovieLens 100k dataset](https://files.grouplens.org/datasets/movielens/ml-100k.zip) – download and extract `u.data` and `u.item` into the `data/` folder.
 
-### 1. Train the model (creates the required model file)
-Before building the Docker image, you need to train the Neural Collaborative Filtering model.  
-Run the training script from your project root:
-
-```bash
-python train.py
-```
-
-This will:
-- Read the dataset from `data/`
-- Train the model and save it as `models/recommender_v1.keras`
-
-### 2. Build the Docker image
+### 1. Build the Docker image
+Open a terminal in the project root and run:
 ```bash
 docker build -t movie-recommender-api .
 ```
 
-### 3. Run the container (mounting both data and models)
+### 2. Train the model (inside Docker)
+The training script will create the model file `models/recommender_v1.keras`.  
+Run the following command (PowerShell on Windows, bash on Linux/Mac):
+```bash
+docker run --rm \
+  -v "$(pwd)/data:/app/data" \
+  -v "$(pwd)/models:/app/models" \
+  movie-recommender-api python train.py
+```
+*For PowerShell on Windows you may use backticks for line breaks, or paste as a single line.*
+
+After training finishes, the `models/` folder will contain `recommender_v1.keras`.
+
+### 3. Start the API service
+Now run the container with the API, mounting both `data` and `models`:
 ```bash
 docker run --name recommender-service -p 8000:8000 \
   -v "$(pwd)/data:/app/data" \
@@ -61,19 +62,17 @@ docker run --name recommender-service -p 8000:8000 \
   movie-recommender-api
 ```
 
-### 4. Access API documentation
-Open [http://localhost:8000/docs](http://localhost:8000/docs) to see the interactive Swagger UI.
+### 4. Access the API documentation
+Open [http://localhost:8000/docs](http://localhost:8000/docs) in your browser to see the interactive Swagger UI.
 
-## Running the UI
-
-- **In a separate terminal (with your venv active)**:
-
-    ```bash
-    streamlit run src/app_ui.py 
-    ```
+## Running the UI (Streamlit)
+In a separate terminal, install Streamlit (if not already) and run:
+```bash
+pip install streamlit
+streamlit run src/app_ui.py
+```
 
 ## 📊 Model Performance
-
 The model was trained for 10 epochs. The best generalization was observed around **Epoch 4**, before the onset of overfitting.
 
 | Metric | Value |
@@ -87,7 +86,3 @@ $$MAE = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|$$
 *Note: Ratings are normalized to a [0, 1] scale. An MAE of 0.18 on a 5-star scale represents an average error of approximately 0.9 stars.*
 
 Developed by Braihans - AI Engineering Student
-
-
-
-
