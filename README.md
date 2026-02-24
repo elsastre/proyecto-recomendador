@@ -34,25 +34,43 @@ $$y_{ui} = \sigma(MLP(P^T v_u \oplus Q^T v_i))$$
 
 ### Prerequisites
 - Docker installed on your machine.
-- MovieLens 100k dataset (u.data, u.item) placed in the `/data` folder.
+- MovieLens 100k dataset (`u.data`, `u.item`) placed in the `/data` folder.
 
-### Running with Docker
-1. **Build the image**:
-   ```bash
-   docker build -t movie-recommender-api .
+### 1. Train the model (creates the required model file)
+Before building the Docker image, you need to train the Neural Collaborative Filtering model.  
+Run the training script from your project root:
 
-2. **Run the container (mounting the data volume)**:
-   ```bash 
-    docker run --name recommender-service -p 8000:8000 -v "$(pwd)/data:/app/data" movie-recommender-api
+```bash
+python train.py
+```
 
-3. **Access API Documentation: Open http://localhost:8000/docs to see the interactive Swagger UI.**
+This will:
+- Read the dataset from `data/`
+- Train the model and save it as `models/recommender_v1.keras`
+
+### 2. Build the Docker image
+```bash
+docker build -t movie-recommender-api .
+```
+
+### 3. Run the container (mounting both data and models)
+```bash
+docker run --name recommender-service -p 8000:8000 \
+  -v "$(pwd)/data:/app/data" \
+  -v "$(pwd)/models:/app/models" \
+  movie-recommender-api
+```
+
+### 4. Access API documentation
+Open [http://localhost:8000/docs](http://localhost:8000/docs) to see the interactive Swagger UI.
 
 ## Running the UI
 
--  **In a separate terminal (with your venv active)**:
+- **In a separate terminal (with your venv active)**:
 
     ```bash
     streamlit run src/app_ui.py 
+    ```
 
 ## 📊 Model Performance
 
@@ -69,6 +87,7 @@ $$MAE = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|$$
 *Note: Ratings are normalized to a [0, 1] scale. An MAE of 0.18 on a 5-star scale represents an average error of approximately 0.9 stars.*
 
 Developed by Braihans - AI Engineering Student
+
 
 
 
