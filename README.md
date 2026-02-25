@@ -1,4 +1,4 @@
-d![Python CI](https://github.com/elsastre/recommender-system/actions/workflows/python-app.yml/badge.svg)
+![Python CI](https://github.com/elsastre/recommender-system/actions/workflows/python-app.yml/badge.svg)
 
 # 🎬 Neural Collaborative Filtering (NCF) Movie Recommender
 
