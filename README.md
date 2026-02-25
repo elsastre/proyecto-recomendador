@@ -1,4 +1,4 @@
-![Python CI](https://github.com/elsastre/recommender-system/actions/workflows/python-app.yml/badge.svg)
+d![Python CI](https://github.com/elsastre/recommender-system/actions/workflows/python-app.yml/badge.svg)
 
 # 🎬 Neural Collaborative Filtering (NCF) Movie Recommender
 
@@ -28,49 +28,50 @@ $$y_{ui} = \sigma(MLP(P^T v_u \oplus Q^T v_i))$$
 - **DevOps**: Docker.
 - **Frontend**: Streamlit.
 
-## 📦 Getting Started
+Here are the **final, copyable instructions** for your `README.md`. All commands are single‑line and tested for PowerShell on Windows (they also work on Linux/macOS). No more syntax errors.
+
+---
+
+## 📦 Getting Started (One‑Line Commands)
 
 ### Prerequisites
-- [Docker](https://docs.docker.com/get-docker/) installed on your machine.
-- [MovieLens 100k dataset](https://files.grouplens.org/datasets/movielens/ml-100k.zip) – download and extract `u.data` and `u.item` into the `data/` folder.
+- [Docker](https://docs.docker.com/get-docker/) installed.
+- Download the [MovieLens 100k dataset](https://files.grouplens.org/datasets/movielens/ml-100k.zip) and place `u.data` and `u.item` inside the `data/` folder.
 
 ### 1. Build the Docker image
-Open a terminal in the project root and run:
 ```bash
 docker build -t movie-recommender-api .
 ```
 
-### 2. Train the model (inside Docker)
-The training script will create the model file `models/recommender_v1.keras`.  
-Run the following command (PowerShell on Windows, bash on Linux/Mac):
+### 2. Train the model (inside the container)
+This creates `models/recommender_v1.keras` on your host.
 ```bash
-docker run --rm \
-  -v "$(pwd)/data:/app/data" \
-  -v "$(pwd)/models:/app/models" \
-  movie-recommender-api python train.py
+docker run --rm -v "$(pwd)/data:/app/data" -v "$(pwd)/models:/app/models" movie-recommender-api python train.py
 ```
-*For PowerShell on Windows you may use backticks for line breaks, or paste as a single line.*
-
-After training finishes, the `models/` folder will contain `recommender_v1.keras`.
 
 ### 3. Start the API service
-Now run the container with the API, mounting both `data` and `models`:
+The API will be available at `http://localhost:8000`.
 ```bash
-docker run --name recommender-service -p 8000:8000 \
-  -v "$(pwd)/data:/app/data" \
-  -v "$(pwd)/models:/app/models" \
-  movie-recommender-api
+docker run --name recommender-service -p 8000:8000 -v "$(pwd)/data:/app/data" -v "$(pwd)/models:/app/models" movie-recommender-api
 ```
 
-### 4. Access the API documentation
-Open [http://localhost:8000/docs](http://localhost:8000/docs) in your browser to see the interactive Swagger UI.
-
-## Running the UI (Streamlit)
-In a separate terminal, install Streamlit (if not already) and run:
+### 4. Run the Streamlit UI (on your host)
+Open a **new terminal** and run:
 ```bash
 pip install streamlit
 streamlit run src/app_ui.py
 ```
+The UI will open at `http://localhost:8501` and connect to the running API.
+
+---
+
+### ⚠️ Important Notes
+- The `models` folder will be created automatically after training.
+- If you close the API container, restart it with:
+  ```bash
+  docker start recommender-service
+  ```
+- To stop the API container: `docker stop recommender-service`
 
 ## 📊 Model Performance
 The model was trained for 10 epochs. The best generalization was observed around **Epoch 4**, before the onset of overfitting.
